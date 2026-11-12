@@ -1,75 +1,26 @@
-# Exchange Rate API Task
+# Exchange Rate Export
 
-A small Python 3.11+ script that requests exchange rates from ExchangeRate-API,
-backs up the original JSON response, converts the data to a pandas DataFrame,
-and saves the result as CSV and XLSX files.
+Python-скрипт получает курсы валют из ExchangeRate-API и сохраняет исходный ответ в JSON, а таблицу курсов в CSV и XLSX.
 
-## Data source
-
-The script uses the public endpoint:
-
-```text
-https://open.er-api.com/v6/latest/USD
-```
-
-The API response contains rates with USD as the base currency. The output column
-`Rate_to_USD` stores the value of one unit of each currency in USD, so the rate
-returned by the API is inverted with `1 / rate`.
-
-## Output
-
-After a successful run, the `output` directory contains:
-
-```text
-exchange_rates_backup.json
-exchange_rates.csv
-exchange_rates.xlsx
-```
-
-The CSV and XLSX files contain two columns:
-
-- `Currency` — currency code
-- `Rate_to_USD` — value of one unit of the currency in USD
-
-## Requirements
-
-- Python 3.11+
-- requests
-- pandas
-- openpyxl
-
-## Installation
-
-Create a virtual environment:
+## Запуск
 
 ```bash
 python -m venv .venv
-```
-
-Activate it on Windows:
-
-```bash
-.venv\Scripts\activate
-```
-
-Activate it on Linux/macOS:
-
-```bash
 source .venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-## Run
-
-```bash
+python -m pip install -r requirements.txt
 python exchange_rates.py
 ```
 
-Basic logging is printed to the console. HTTP errors are handled by
-`raise_for_status()`, and the script also validates the API `result` field and
-the presence of the `rates` object.
+На Windows активируйте окружение командой `.venv\Scripts\activate`. Для запуска нужен доступ к открытому API, ключ не требуется.
+
+## Что получается
+
+В каталоге `output/` есть пример результата:
+
+| Файл | Содержимое |
+| --- | --- |
+| `exchange_rates_backup.json` | Исходный ответ API |
+| `exchange_rates.csv` | Таблица курсов в CSV |
+| `exchange_rates.xlsx` | Та же таблица в Excel |
+
+API возвращает количество единиц валюты за доллар. Колонка `Rate_to_USD` показывает стоимость одной единицы валюты в долларах, поэтому исходный курс инвертируется. Скрипт использует таймаут HTTP-запроса, проверяет статус ответа и наличие курсов.
